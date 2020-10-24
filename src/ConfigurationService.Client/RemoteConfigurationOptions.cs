@@ -158,5 +158,24 @@ namespace ConfigurationService.Client
 
             CreateSubscriber = () => new NatsSubscriber(options);
         }
+
+        /// <summary>
+        /// Adds NETMQ as the configuration subscriber.
+        /// </summary>
+        /// <param name="address">The publisher address to connect the socket to.</param>
+        public void AddNetMqSubscriber(string address)
+        {
+            if (address == null)
+            {
+                throw new ArgumentNullException(nameof(address));
+            }
+
+            if (CreateSubscriber != null)
+            {
+                throw new InvalidOperationException("A subscriber has already been configured.");
+            }
+
+            CreateSubscriber = () => new NetMqSubscriber(address);
+        }
     }
 }

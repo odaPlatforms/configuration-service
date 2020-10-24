@@ -5,6 +5,7 @@ using ConfigurationService.Hosting.Providers.Git;
 using ConfigurationService.Hosting.Providers.Vault;
 using ConfigurationService.Hosting.Publishers;
 using ConfigurationService.Hosting.Publishers.Nats;
+using ConfigurationService.Hosting.Publishers.NetMq;
 using ConfigurationService.Hosting.Publishers.RabbitMq;
 using ConfigurationService.Hosting.Publishers.Redis;
 using Microsoft.Extensions.DependencyInjection;
@@ -249,6 +250,33 @@ namespace ConfigurationService.Hosting
 
             builder.Services.AddSingleton(options);
             builder.Services.AddSingleton<IPublisher, NatsPublisher>();
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Adds NetMQ as the configuration publisher.
+        /// </summary>
+        /// <param name="builder">The <see cref="IConfigurationServiceBuilder"/> to add services to.</param>
+        /// <param name="address">The address to bind the socket to.</param>
+        /// <returns>An <see cref="IConfigurationServiceBuilder"/> that can be used to further configure the 
+        /// ConfigurationService services.</returns>
+        public static IConfigurationServiceBuilder AddNetMqPublisher(this IConfigurationServiceBuilder builder, string address)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (address == null)
+            {
+                throw new ArgumentNullException(nameof(address));
+            }
+
+            var options = new NetMqOptions { Address = address };
+
+            builder.Services.AddSingleton(options);
+            builder.Services.AddSingleton<IPublisher, NetMqPublisher>();
 
             return builder;
         }
